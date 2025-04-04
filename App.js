@@ -6,6 +6,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import SavedScreen from './screens/SavedScreen';
 import AccountScreen from './screens/Account';
+import EditProfileScreen from './screens/EditProfileScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
+import LanguageScreen from './screens/LanguageScreen';
+import HelpSupportScreen from './screens/HelpSupportScreen';
+import AboutAppScreen from './screens/AboutAppScreen';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
@@ -31,6 +36,76 @@ export default function App() {
             name="Account" 
             component={AccountScreen} 
             options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="EditProfile" 
+            component={EditProfileScreen} 
+            options={{ 
+              title: 'Edit Profile',
+              headerStyle: {
+                backgroundColor: '#E8F5E9',
+              },
+              headerTintColor: '#2E7D32',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}
+          />
+          <Stack.Screen 
+            name="Notifications" 
+            component={NotificationsScreen} 
+            options={{ 
+              title: 'Notifications',
+              headerStyle: {
+                backgroundColor: '#E8F5E9',
+              },
+              headerTintColor: '#2E7D32',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}
+          />
+          <Stack.Screen 
+            name="Language" 
+            component={LanguageScreen} 
+            options={{ 
+              title: 'Language',
+              headerStyle: {
+                backgroundColor: '#E8F5E9',
+              },
+              headerTintColor: '#2E7D32',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}
+          />
+          <Stack.Screen 
+            name="HelpSupport" 
+            component={HelpSupportScreen} 
+            options={{ 
+              title: 'Help & Support',
+              headerStyle: {
+                backgroundColor: '#E8F5E9',
+              },
+              headerTintColor: '#2E7D32',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}
+          />
+          <Stack.Screen 
+            name="AboutApp" 
+            component={AboutAppScreen} 
+            options={{ 
+              title: 'About App',
+              headerStyle: {
+                backgroundColor: '#E8F5E9',
+              },
+              headerTintColor: '#2E7D32',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>

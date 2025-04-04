@@ -7,15 +7,18 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  SafeAreaView
+  SafeAreaView,
+  Alert
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { resetStats } from '../redux/slices/scanSlice';
 
 const { width } = Dimensions.get('window');
 
 export default function AccountScreen({ navigation }) {
   const stats = useSelector((state) => state.scans);
+  const dispatch = useDispatch();
 
   const menuItems = [
     {
@@ -23,32 +26,60 @@ export default function AccountScreen({ navigation }) {
       title: 'Edit Profile',
       icon: 'account-edit-outline',
       color: '#4CAF50',
+      onPress: () => navigation.navigate('EditProfile')
     },
     {
       id: 'notifications',
       title: 'Notifications',
       icon: 'bell-outline',
       color: '#FF9800',
+      onPress: () => navigation.navigate('Notifications')
     },
     {
       id: 'language',
       title: 'Language',
       icon: 'translate',
       color: '#2196F3',
+      onPress: () => navigation.navigate('Language')
     },
     {
       id: 'help',
       title: 'Help & Support',
       icon: 'help-circle-outline',
       color: '#9C27B0',
+      onPress: () => navigation.navigate('HelpSupport')
     },
     {
       id: 'about',
       title: 'About App',
       icon: 'information-outline',
       color: '#607D8B',
+      onPress: () => navigation.navigate('AboutApp')
     },
   ];
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { 
+          text: "Logout", 
+          onPress: () => {
+            // Reset stats and navigate to home
+            dispatch(resetStats());
+            navigation.navigate('Home');
+            Alert.alert("Logged Out", "You have been successfully logged out.");
+          },
+          style: "destructive"
+        }
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,7 +91,10 @@ export default function AccountScreen({ navigation }) {
                 source={{ uri: 'https://i.imgur.com/default-avatar.jpg' }}
                 style={styles.avatar}
               />
-              <TouchableOpacity style={styles.editAvatarButton}>
+              <TouchableOpacity 
+                style={styles.editAvatarButton}
+                onPress={() => navigation.navigate('EditProfile')}
+              >
                 <MaterialCommunityIcons name="camera" size={20} color="white" />
               </TouchableOpacity>
             </View>
@@ -88,7 +122,11 @@ export default function AccountScreen({ navigation }) {
 
         <View style={styles.menuContainer}>
           {menuItems.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.menuItem}>
+            <TouchableOpacity 
+              key={item.id} 
+              style={styles.menuItem}
+              onPress={item.onPress}
+            >
               <View style={[styles.menuIcon, { backgroundColor: `${item.color}15` }]}>
                 <MaterialCommunityIcons name={item.icon} size={24} color={item.color} />
               </View>
@@ -98,7 +136,10 @@ export default function AccountScreen({ navigation }) {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity 
+          style={styles.logoutButton}
+          onPress={handleLogout}
+        >
           <MaterialCommunityIcons name="logout" size={20} color="#E53935" />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
