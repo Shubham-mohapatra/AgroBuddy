@@ -1,6 +1,6 @@
 # AgroBuddy
 
-AgroBuddy is a mobile application designed to help farmers and gardeners identify plant diseases through image recognition technology.
+AgroBuddy is a react-native mobile application designed to help farmers and gardeners identify plant diseases through image recognition technology.
 
 ## Features
 
