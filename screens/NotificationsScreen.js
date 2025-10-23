@@ -8,10 +8,13 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 
-export default function NotificationsScreen() {
+export default function NotificationsScreen({ navigation }) {
+  // Remove the useNavigation hook and use the navigation prop directly
+  // const navigation = useNavigation();
+  
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [reminderNotifications, setReminderNotifications] = useState(true);
@@ -22,7 +25,7 @@ export default function NotificationsScreen() {
     Alert.alert(
       "Settings Saved",
       "Your notification preferences have been updated.",
-      [{ text: "OK" }]
+      [{ text: "OK", onPress: () => navigation.goBack() }]
     );
   };
 

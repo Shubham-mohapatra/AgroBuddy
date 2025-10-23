@@ -1,23 +1,17 @@
-// Remove the @gradio/client import
-// import { Client } from "@gradio/client";
-
 export const predictDisease = async (imageUri) => {
   try {
-    // Convert image to blob
     const response = await fetch(imageUri);
     const blob = await response.blob();
 
-    // Create a FormData object to send the image
     const formData = new FormData();
     formData.append("image", blob, "image.jpg");
 
-    // Make a direct fetch request to the API
+    // Update the endpoint to include /run/predict and use the correct method
     const apiResponse = await fetch("https://adityaanand-phytosense.hf.space/run/predict", {
       method: "POST",
       body: formData,
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'multipart/form-data',
       },
     });
 

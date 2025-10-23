@@ -39,6 +39,13 @@ const scanSlice = createSlice({
       if (state.saved > 0) {
         state.saved -= 1;
       }
+    },
+    
+    resetStats: (state) => {
+      state.scans = 0;
+      state.saved = 0;
+      state.plants = 0;
+      state.savedDiagnoses = [];
     }
   },
 });
@@ -48,7 +55,8 @@ export const {
   incrementSaved, 
   incrementPlants, 
   saveDiagnosis,
-  deleteDiagnosis 
+  deleteDiagnosis,
+  resetStats
 } = scanSlice.actions;
 
 export default scanSlice.reducer;

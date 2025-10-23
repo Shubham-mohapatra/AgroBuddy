@@ -7,23 +7,29 @@ import {
   ScrollView,
   Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 
 export default function LanguageScreen({ navigation }) {
+  // Remove useNavigation hook
+  // const navigation = useNavigation();
+  
   const [selectedLanguage, setSelectedLanguage] = useState('english');
-
+  
   const languages = [
-    { id: 'english', name: 'English', native: 'English' },
-    { id: 'hindi', name: 'Hindi', native: 'हिन्दी' },
-    { id: 'spanish', name: 'Spanish', native: 'Español' },
-    { id: 'french', name: 'French', native: 'Français' },
-    { id: 'german', name: 'German', native: 'Deutsch' },
-    { id: 'chinese', name: 'Chinese', native: '中文' },
-    { id: 'japanese', name: 'Japanese', native: '日本語' },
-    { id: 'russian', name: 'Russian', native: 'Русский' },
-    { id: 'portuguese', name: 'Portuguese', native: 'Português' },
-    { id: 'arabic', name: 'Arabic', native: 'العربية' },
+    { id: 'english', name: 'English', native: 'English', flag: '🇺🇸' },
+    { id: 'hindi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳' },
+    { id: 'bengali', name: 'Bengali', native: 'বাংলা', flag: '🇮🇳' },
+    { id: 'telugu', name: 'Telugu', native: 'తెలుగు', flag: '🇮🇳' },
+    { id: 'marathi', name: 'Marathi', native: 'मराठी', flag: '🇮🇳' },
+    { id: 'tamil', name: 'Tamil', native: 'தமிழ்', flag: '🇮🇳' },
+    { id: 'gujarati', name: 'Gujarati', native: 'ગુજરાતી', flag: '🇮🇳' },
+    { id: 'urdu', name: 'Urdu', native: 'اردو', flag: '🇮🇳' },
+    { id: 'kannada', name: 'Kannada', native: 'ಕನ್ನಡ', flag: '🇮🇳' },
+    { id: 'odia', name: 'Odia', native: 'ଓଡ଼ିଆ', flag: '🇮🇳' },
+    { id: 'punjabi', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+    { id: 'malayalam', name: 'Malayalam', native: 'മലയാളം', flag: '🇮🇳' },
+    { id: 'assamese', name: 'Assamese', native: 'অসমীয়া', flag: '🇮🇳' },
   ];
 
   const saveLanguage = () => {

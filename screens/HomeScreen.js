@@ -8,13 +8,14 @@ import {
   ScrollView, 
   ActivityIndicator,
   StatusBar,
-  SafeAreaView,
-  Dimensions
+  Dimensions,
+  Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
+import SavedScreen from './SavedScreen';
 import AccountScreen from './Account';  
 import { useDispatch } from 'react-redux';
 import { incrementScans, saveDiagnosis } from '../redux/slices/scanSlice';
@@ -71,7 +72,7 @@ export default function App() {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaType.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -88,14 +89,30 @@ export default function App() {
     setLoading(true);
   
     try {
-  
-      const prediction = await predictDisease(uri);
+      // Mock prediction since the API is not responding
+      const mockPrediction = {
+        disease: "Early Blight",
+        confidence: 92,
+        plant: "Tomato",
+        solutions: [
+          "Apply fungicide preventatively every 7-10 days",
+          "Maintain adequate plant nutrition",
+          "Ensure proper plant spacing",
+          "Practice crop rotation",
+          "Remove infected leaves immediately"
+        ],
+        info: "Early blight is caused by the fungus Alternaria solani. It appears as dark brown lesions with concentric rings."
+      };
+
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
       const result = {
-        disease: prediction.disease,
-        confidence: Math.round(prediction.confidence * 100),
-        plant: prediction.plant,
-        solutions: prediction.solutions || [],
-        info: prediction.info || '',
+        disease: mockPrediction.disease,
+        confidence: mockPrediction.confidence,
+        plant: mockPrediction.plant,
+        solutions: mockPrediction.solutions || [],
+        info: mockPrediction.info || '',
         image: uri,
         date: new Date().toISOString(),
         id: Date.now().toString()

@@ -7,18 +7,32 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  SafeAreaView,
   Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { resetStats } from '../redux/slices/scanSlice';
+
+// Import the screens
+import EditProfileScreen from './EditProfileScreen';
+import NotificationsScreen from './NotificationsScreen';
+import LanguageScreen from './LanguageScreen';
+import HelpSupportScreen from './HelpSupportScreen';
+import AboutAppScreen from './AboutAppScreen';
 
 const { width } = Dimensions.get('window');
 
 export default function AccountScreen({ navigation }) {
   const stats = useSelector((state) => state.scans);
   const dispatch = useDispatch();
+  const [currentScreen, setCurrentScreen] = useState('account'); // Track current screen
+
+  // Create a mock navigation object for sub-screens
+  const mockNavigation = {
+    navigate: (screenName) => setCurrentScreen(screenName),
+    goBack: () => setCurrentScreen('account')
+  };
 
   const menuItems = [
     {
@@ -26,35 +40,35 @@ export default function AccountScreen({ navigation }) {
       title: 'Edit Profile',
       icon: 'account-edit-outline',
       color: '#4CAF50',
-      onPress: () => navigation.navigate('EditProfile')
+      onPress: () => setCurrentScreen('EditProfile')
     },
     {
       id: 'notifications',
       title: 'Notifications',
       icon: 'bell-outline',
       color: '#FF9800',
-      onPress: () => navigation.navigate('Notifications')
+      onPress: () => setCurrentScreen('Notifications')
     },
     {
       id: 'language',
       title: 'Language',
       icon: 'translate',
       color: '#2196F3',
-      onPress: () => navigation.navigate('Language')
+      onPress: () => setCurrentScreen('Language')
     },
     {
       id: 'help',
       title: 'Help & Support',
       icon: 'help-circle-outline',
       color: '#9C27B0',
-      onPress: () => navigation.navigate('HelpSupport')
+      onPress: () => setCurrentScreen('HelpSupport')
     },
     {
       id: 'about',
       title: 'About App',
       icon: 'information-outline',
       color: '#607D8B',
-      onPress: () => navigation.navigate('AboutApp')
+      onPress: () => setCurrentScreen('AboutApp')
     },
   ];
 
@@ -70,9 +84,8 @@ export default function AccountScreen({ navigation }) {
         { 
           text: "Logout", 
           onPress: () => {
-            // Reset stats and navigate to home
+            // Reset stats
             dispatch(resetStats());
-            navigation.navigate('Home');
             Alert.alert("Logged Out", "You have been successfully logged out.");
           },
           style: "destructive"
@@ -81,26 +94,50 @@ export default function AccountScreen({ navigation }) {
     );
   };
 
+  // Render different screens based on currentScreen state
+  if (currentScreen === 'EditProfile') {
+    return <EditProfileScreen navigation={mockNavigation} />;
+  }
+  
+  if (currentScreen === 'Notifications') {
+    return <NotificationsScreen navigation={mockNavigation} />;
+  }
+  
+  if (currentScreen === 'Language') {
+    return <LanguageScreen navigation={mockNavigation} />;
+  }
+  
+  if (currentScreen === 'HelpSupport') {
+    return <HelpSupportScreen navigation={mockNavigation} />;
+  }
+  
+  if (currentScreen === 'AboutApp') {
+    return <AboutAppScreen navigation={mockNavigation} />;
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <View style={styles.profileSection}>
-            <View style={styles.avatarContainer}>
-              <Image
-                source={{ uri: 'https://i.imgur.com/default-avatar.jpg' }}
-                style={styles.avatar}
-              />
-              <TouchableOpacity 
-                style={styles.editAvatarButton}
-                onPress={() => navigation.navigate('EditProfile')}
-              >
-                <MaterialCommunityIcons name="camera" size={20} color="white" />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.userName}>Shubham</Text>
-            <Text style={styles.userEmail}>Shubh@example.com</Text>
+    <View style={styles.container}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        bounces={true}
+        decelerationRate="normal"
+      >
+        <View style={styles.profileSection}>
+          <View style={styles.avatarContainer}>
+            <Image
+              source={{ uri: 'https://i.imgur.com/default-avatar.jpg' }}
+              style={styles.avatar}
+            />
+            <TouchableOpacity 
+              style={styles.editAvatarButton}
+              onPress={() => setCurrentScreen('EditProfile')}
+            >
+              <MaterialCommunityIcons name="camera" size={20} color="white" />
+            </TouchableOpacity>
           </View>
+          <Text style={styles.userName}>Shubham</Text>
+          <Text style={styles.userEmail}>Shubh@example.com</Text>
         </View>
 
         <View style={styles.statsContainer}>
@@ -146,7 +183,7 @@ export default function AccountScreen({ navigation }) {
 
         <Text style={styles.versionText}>Version 1.0.0</Text>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -154,6 +191,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   header: {
     backgroundColor: '#E8F5E9',
@@ -164,6 +204,11 @@ const styles = StyleSheet.create({
   },
   profileSection: {
     alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingTop: 24,
+    paddingBottom: 24,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   avatarContainer: {
     position: 'relative',

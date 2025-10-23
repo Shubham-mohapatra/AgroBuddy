@@ -6,13 +6,33 @@ import {
   ScrollView, 
   Image, 
   TouchableOpacity,
-  Linking
+  Linking,
+  Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 
-export default function AboutAppScreen() {
-  const navigation = useNavigation();
+export default function AboutAppScreen({ navigation }) {
+  // Remove useNavigation hook
+  // const navigation = useNavigation();
+  
+  // Function to handle navigation with error handling
+  const navigateToScreen = (screenName) => {
+    try {
+      // Log the navigation attempt for debugging
+      console.log(`Attempting to navigate to: ${screenName}`);
+      
+      // Simple direct navigation
+      navigation.navigate(screenName);
+    } catch (error) {
+      console.error(`Navigation error to ${screenName}:`, error);
+      Alert.alert(
+        "Navigation Error",
+        `Unable to navigate to ${screenName}. Error: ${error.message}`,
+        [{ text: "OK" }]
+      );
+    }
+  };
   
   return (
     <ScrollView style={styles.container}>
@@ -67,6 +87,54 @@ export default function AboutAppScreen() {
             </Text>
           </View>
         </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>App Settings</Text>
+        
+        <TouchableOpacity 
+          style={styles.linkButton}
+          onPress={() => {
+            console.log("Navigating to EditProfile");
+            navigation.navigate('EditProfile');
+          }}
+        >
+          <MaterialCommunityIcons name="account-edit" size={20} color="#4CAF50" />
+          <Text style={styles.linkText}>Edit Profile</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.linkButton}
+          onPress={() => {
+            console.log("Navigating to Language");
+            navigation.navigate('Language');
+          }}
+        >
+          <MaterialCommunityIcons name="translate" size={20} color="#4CAF50" />
+          <Text style={styles.linkText}>Language Settings</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.linkButton}
+          onPress={() => {
+            console.log("Navigating to Notifications");
+            navigation.navigate('Notifications');
+          }}
+        >
+          <MaterialCommunityIcons name="bell-outline" size={20} color="#4CAF50" />
+          <Text style={styles.linkText}>Notification Settings</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.linkButton}
+          onPress={() => {
+            console.log("Navigating to HelpSupport");
+            navigation.navigate('HelpSupport');
+          }}
+        >
+          <MaterialCommunityIcons name="help-circle-outline" size={20} color="#4CAF50" />
+          <Text style={styles.linkText}>Help & Support</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.section}>

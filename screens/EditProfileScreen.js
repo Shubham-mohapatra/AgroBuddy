@@ -9,12 +9,13 @@ import {
   ScrollView,
   Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { CommonActions } from '@react-navigation/native';
+
 
 export default function EditProfileScreen({ navigation }) {
-  // No useNavigation hook - we'll use the prop directly
+ 
   
   const [name, setName] = useState('Shubham');
   const [email, setEmail] = useState('Shubh@example.com');
@@ -26,36 +27,29 @@ export default function EditProfileScreen({ navigation }) {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Please grant permission to access your photos');
+      Alert.alert('Permission Denied', 'We need permission to access your photos.');
       return;
     }
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaType.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       setProfileImage(result.assets[0].uri);
     }
   };
 
   const saveProfile = () => {
-    // Here you would typically save to a backend or local storage
     Alert.alert(
       "Profile Updated",
       "Your profile has been updated successfully!",
       [{ 
         text: "OK", 
-        onPress: () => {
-          if (navigation) {
-            navigation.goBack();
-          } else {
-            console.log("Navigation is undefined");
-          }
-        } 
+        onPress: () => navigation.goBack()
       }]
     );
   };
@@ -71,59 +65,36 @@ export default function EditProfileScreen({ navigation }) {
       </View>
 
       <View style={styles.formContainer}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Full Name</Text>
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="account" size={22} color="#4CAF50" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="Enter your full name"
-            />
-          </View>
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Email Address</Text>
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="email" size={22} color="#4CAF50" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Enter your email"
-              keyboardType="email-address"
-            />
-          </View>
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Phone Number</Text>
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="phone" size={22} color="#4CAF50" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Enter your phone number"
-              keyboardType="phone-pad"
-            />
-          </View>
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Location</Text>
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="map-marker" size={22} color="#4CAF50" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Enter your location"
-            />
-          </View>
-        </View>
+        <InputField 
+          label="Full Name"
+          icon="account"
+          value={name}
+          onChangeText={setName}
+          placeholder="Enter your full name"
+        />
+        <InputField 
+          label="Email Address"
+          icon="email"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Enter your email"
+          keyboardType="email-address"
+        />
+        <InputField 
+          label="Phone Number"
+          icon="phone"
+          value={phone}
+          onChangeText={setPhone}
+          placeholder="Enter your phone number"
+          keyboardType="phone-pad"
+        />
+        <InputField 
+          label="Location"
+          icon="map-marker"
+          value={location}
+          onChangeText={setLocation}
+          placeholder="Enter your location"
+        />
 
         <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
           <Text style={styles.saveButtonText}>Save Changes</Text>
@@ -132,6 +103,23 @@ export default function EditProfileScreen({ navigation }) {
     </ScrollView>
   );
 }
+
+// Reusable Input Field Component
+const InputField = ({ label, icon, value, onChangeText, placeholder, keyboardType = 'default' }) => (
+  <View style={styles.inputGroup}>
+    <Text style={styles.label}>{label}</Text>
+    <View style={styles.inputContainer}>
+      <MaterialCommunityIcons name={icon} size={22} color="#4CAF50" style={styles.inputIcon} />
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        keyboardType={keyboardType}
+      />
+    </View>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {

@@ -15,12 +15,12 @@ import { useSelector, useDispatch } from 'react-redux';
 
 const { width } = Dimensions.get('window');
 
-export default function SavedScreen() {
+export default function SavedScreen({ navigation }) {  // Add navigation prop here
   const savedDiagnoses = useSelector((state) => state.scans.savedDiagnoses || []);
   const dispatch = useDispatch();
   const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
+  
   useEffect(() => {
     console.log('SavedScreen - Saved diagnoses:', savedDiagnoses);
     // Check if images are valid
@@ -168,6 +168,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F9FBF9',
+  },
+  logoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  logoText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#2E7D32',
+    marginRight: 8,
   },
   header: {
     flexDirection: 'row',
