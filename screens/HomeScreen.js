@@ -71,48 +71,96 @@ export default function App() {
   };
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaType.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      // Request permissions first
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'Please allow access to your photo library to select images.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
 
-    if (!result.canceled) {
-      processImage(result.assets[0].uri);
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets && result.assets[0]) {
+        processImage(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Error', 'Failed to pick image. Please try again.');
     }
+  };
+
+  // Validate if image is a plant leaf
+  const validatePlantImage = async (uri) => {
+    // Basic validation - Check if image is valid
+    // In production, you could use a separate ML model to validate if it's a plant
+    return new Promise((resolve) => {
+      // For now, we'll let the backend handle validation
+      // The backend will return an error if it can't detect a plant
+      resolve(true);
+    });
   };
 
   //  processImage function
   const processImage = async (uri) => {
     setImage(uri);
     setLoading(true);
+    setResult(null);
   
     try {
-      // Mock prediction since the API is not responding
-      const mockPrediction = {
-        disease: "Early Blight",
-        confidence: 92,
-        plant: "Tomato",
-        solutions: [
-          "Apply fungicide preventatively every 7-10 days",
-          "Maintain adequate plant nutrition",
-          "Ensure proper plant spacing",
-          "Practice crop rotation",
-          "Remove infected leaves immediately"
-        ],
-        info: "Early blight is caused by the fungus Alternaria solani. It appears as dark brown lesions with concentric rings."
-      };
+      console.log(' Processing image:', uri);
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Validate image (basic check)
+      const isValid = await validatePlantImage(uri);
+      if (!isValid) {
+        Alert.alert(
+          "Invalid Image",
+          "Please upload a clear photo of a plant leaf.",
+          [{ text: "OK" }]
+        );
+        setLoading(false);
+        return;
+      }
 
+      // Call the backend API for prediction
+      console.log(' Sending image to backend...');
+      const prediction = await predictDisease(uri);
+      
+      console.log(' Prediction received:', prediction);
+
+      // Check if backend detected a valid plant
+      if (!prediction || !prediction.plant || !prediction.disease) {
+        Alert.alert(
+          "Detection Failed",
+          "Could not detect a plant in the image. Please upload a clear photo of a plant leaf.",
+          [{ text: "OK" }]
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Format the result
       const result = {
-        disease: mockPrediction.disease,
-        confidence: mockPrediction.confidence,
-        plant: mockPrediction.plant,
-        solutions: mockPrediction.solutions || [],
-        info: mockPrediction.info || '',
+        disease: prediction.disease,
+        confidence: prediction.confidence || 0,
+        plant: prediction.plant,
+        solutions: prediction.solutions || [],
+        symptoms: prediction.symptoms || [],
+        causes: prediction.causes || [],
+        prevention: prediction.prevention || [],
+        treatmentProducts: prediction.treatmentProducts || [],
+        severity: prediction.severity || 'Unknown',
+        info: prediction.info || '',
         image: uri,
         date: new Date().toISOString(),
         id: Date.now().toString()
@@ -121,13 +169,21 @@ export default function App() {
       dispatch(incrementScans());
       setResult(result);
       
-    } catch (error) {
-      console.error("Error processing image:", error);
+      // Show success message
       Alert.alert(
-        "Error",
-        "Failed to process the image. Please try again.",
+        "Detection Complete",
+        `Detected: ${prediction.plant} - ${prediction.disease}`,
         [{ text: "OK" }]
       );
+      
+    } catch (error) {
+      console.error("❌ Error processing image:", error);
+      Alert.alert(
+        "Error",
+        "Failed to analyze the image. Please ensure:\n\n• You're connected to WiFi\n• The image shows a plant leaf clearly\n• The backend server is running\n\nError: " + error.message,
+        [{ text: "OK" }]
+      );
+      setImage(null);
     } finally {
       setLoading(false);
     }
